@@ -57,41 +57,15 @@ public class ArrayList<T> implements List<T> {
 		array = Arrays.copyOf(array, array.length * 2);
 		
 	}
-	@Override
-	public boolean remove(Object pattern) {
-		int index = indexOf((T)pattern);
-		boolean res = false;
-		if (index >= 0) {
-			res = true;
-			remove(index);
-		}
-		return res;
-	}
+	
+   @Override
+   public boolean removeIf(Predicate<T> predicate) {
+	   //TODO try to rewrite method removeIf with complexity O[N]
+	   return false;
+   }
+	
 
-	@Override
-	public T[] toArray(T[] ar) {
-		T[] res = ar.length < size ? Arrays.copyOf(ar, size) : ar;
-		int index = 0;
-		for(T obj: this) {
-			res[index++] = obj;
-		}
-		if(res.length > size) {
-			res[size] = null;
-		}
-		return res;
-	}
-
-	@Override
-	public boolean removeIf(Predicate<T> predicate) {
-		Iterator<T> it = iterator();
-		int oldSize = size;
-		while(it.hasNext()) {
-			if(predicate.test(it.next())) {
-				it.remove();
-			}
-		}
-		return oldSize > size;
-	}
+	
 
 	@Override
 	public int size() {
@@ -99,22 +73,9 @@ public class ArrayList<T> implements List<T> {
 		return size;
 	}
 
-	@Override
-	public boolean addAll(Collection<T> collection) {
-		for(T obj: collection) {
-			add(obj);
-		}
-		return collection.size() > 0;
-	}
+	
 
-	@Override
-	public boolean removeAll(Collection<T> collection) {
-		int oldSize = size;
-		for(T obj: collection) {
-			remove(obj);
-		}
-		return oldSize > size;
-	}
+	
 
 	@Override
 	public Iterator<T> iterator() {
@@ -131,12 +92,7 @@ public class ArrayList<T> implements List<T> {
 		System.arraycopy(array, index, array, index + 1, size - index);
 		array[index] = obj;
 		size++;
-		if (size == array.length) {
-			reallocate();
-		}
-		System.arraycopy(array, index, array, index + 1, size - index);
-		array[index] = obj;
-		size++;
+		
 
 	}
 
@@ -173,13 +129,13 @@ public class ArrayList<T> implements List<T> {
 		
 	}
 	@Override
-	public int indexOf(T pattern) {
+	public int indexOf(Object pattern) {
 		
 		return indexOf(Predicate.isEqual(pattern));
 	}
 
 	@Override
-	public int lastIndexOf(T pattern) {
+	public int lastIndexOf(Object pattern) {
 		
 		return lastIndexOf(Predicate.isEqual(pattern));
 	}
