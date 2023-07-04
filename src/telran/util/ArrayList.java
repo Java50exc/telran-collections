@@ -2,13 +2,42 @@ package telran.util;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
-
+@SuppressWarnings("unchecked")
 public class ArrayList<T> implements List<T> {
 	private static final int DEFAULT_CAPACITY = 16;
 	private T[] array;
 	private int size = 0;
-	@SuppressWarnings("unchecked")
+	
+	private class ArrayListIterator implements Iterator<T> {
+		int currentIndex = 0;
+		boolean flNext = false;
+			@Override
+			public boolean hasNext() {
+				
+				return currentIndex < size;
+			}
+
+			@Override
+			public T next() {
+				if(!hasNext()) {
+					throw new NoSuchElementException();
+				}
+				flNext = true;
+				return array[currentIndex++];
+			}
+			@Override
+			public void remove() {
+				if(!flNext) {
+					throw new IllegalStateException();
+				}
+				ArrayList.this.remove(--currentIndex);
+				flNext = false;
+			}
+			
+		}
+	
 	public ArrayList(int capacity) {
 		array = (T[]) new Object[capacity];
 	}
@@ -30,8 +59,13 @@ public class ArrayList<T> implements List<T> {
 	}
 	@Override
 	public boolean remove(Object pattern) {
-		// TODO Auto-generated method stub
-		return false;
+		int index = indexOf((T)pattern);
+		boolean res = false;
+		if (index >= 0) {
+			res = true;
+			remove(index);
+		}
+		return res;
 	}
 
 	@Override
@@ -49,50 +83,75 @@ public class ArrayList<T> implements List<T> {
 
 	@Override
 	public boolean removeIf(Predicate<T> predicate) {
-		// TODO Auto-generated method stub
-		return false;
+		Iterator<T> it = iterator();
+		int oldSize = size;
+		while(it.hasNext()) {
+			if(predicate.test(it.next())) {
+				it.remove();
+			}
+		}
+		return oldSize > size;
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return size;
 	}
 
 	@Override
 	public boolean addAll(Collection<T> collection) {
-		// TODO Auto-generated method stub
-		return false;
+		for(T obj: collection) {
+			add(obj);
+		}
+		return collection.size() > 0;
 	}
 
 	@Override
 	public boolean removeAll(Collection<T> collection) {
-		// TODO Auto-generated method stub
-		return false;
+		int oldSize = size;
+		for(T obj: collection) {
+			remove(obj);
+		}
+		return oldSize > size;
 	}
 
 	@Override
 	public Iterator<T> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return new ArrayListIterator();
 	}
 
 	@Override
 	public void add(int index, T obj) {
-		// TODO Auto-generated method stub
+		indexValidation(index, true);
+		if (size == array.length) {
+			reallocate();
+		}
+		System.arraycopy(array, index, array, index + 1, size - index);
+		array[index] = obj;
+		size++;
+		if (size == array.length) {
+			reallocate();
+		}
+		System.arraycopy(array, index, array, index + 1, size - index);
+		array[index] = obj;
+		size++;
 
 	}
 
 	@Override
 	public T get(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		indexValidation(index, false);
+		return array[index];
 	}
 
 	@Override
 	public T set(int index, T obj) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		T res = get(index);
+		array[index] = obj;
+		return res;
 	}
 
 	@Override
@@ -115,26 +174,40 @@ public class ArrayList<T> implements List<T> {
 	}
 	@Override
 	public int indexOf(T pattern) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return indexOf(Predicate.isEqual(pattern));
 	}
 
 	@Override
 	public int lastIndexOf(T pattern) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return lastIndexOf(Predicate.isEqual(pattern));
 	}
 
 	@Override
 	public int indexOf(Predicate<T> predicate) {
-		// TODO Auto-generated method stub
-		return 0;
+		int res = -1;
+		int index = 0;
+		while (index < size && res == -1) {
+			if (predicate.test(array[index])) {
+				res = index;
+			}
+			index++;
+		}
+		return res;
 	}
 
 	@Override
 	public int lastIndexOf(Predicate<T> predicate) {
-		// TODO Auto-generated method stub
-		return 0;
+		int res = -1;
+		int index = size - 1;
+		while (index >= 0 && res == -1) {
+			if (predicate.test(array[index])) {
+				res = index;
+			}
+			index--;
+		}
+		return res;
 	}
 
 }
