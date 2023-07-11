@@ -7,8 +7,7 @@ public interface List<T> extends Collection<T> {
    T get(int index);
    T set(int index, T obj);
    T remove(int index);
-   int indexOf(Object pattern);
-   int lastIndexOf(Object pattern);
+   
    int indexOf(Predicate<T> predicate);
    int lastIndexOf(Predicate<T> predicate);
    @Override
@@ -32,6 +31,14 @@ public interface List<T> extends Collection<T> {
 			throw new IndexOutOfBoundsException(index);
 		}
 		
+	}
+	default int indexOf(Object pattern) {
+		return indexOf(Predicate.isEqual(pattern));
+	}
+		
+
+	default int lastIndexOf(Object pattern) {
+		return lastIndexOf(Predicate.isEqual(pattern));
 	}
    
    

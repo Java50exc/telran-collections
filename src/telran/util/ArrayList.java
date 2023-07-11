@@ -134,17 +134,7 @@ public class ArrayList<T> implements List<T> {
 	}
 
 	
-	@Override
-	public int indexOf(Object pattern) {
-		
-		return indexOf(Predicate.isEqual(pattern));
-	}
-
-	@Override
-	public int lastIndexOf(Object pattern) {
-		
-		return lastIndexOf(Predicate.isEqual(pattern));
-	}
+	
 
 	@Override
 	public int indexOf(Predicate<T> predicate) {

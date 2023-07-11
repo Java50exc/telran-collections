@@ -1,6 +1,7 @@
 package telran.util;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 public class LinkedList<T> implements List<T> {
@@ -15,11 +16,86 @@ public class LinkedList<T> implements List<T> {
 	Node<T> head;
 	Node<T> tail;
 	int size;
+	private class LinkedListIterator implements Iterator<T> {
+		Node<T> current = head;
+		boolean flNext = false;
+			@Override
+			public boolean hasNext() {
+				
+				return current != null;
+			}
+
+			@Override
+			public T next() {
+				if (!hasNext()) {
+					throw new NoSuchElementException();
+				}
+				T res = current.obj;
+				current = current.next;
+				flNext = true;
+				return res;
+			}
+			@Override
+			public void remove() {
+				if (!flNext) {
+					throw new IllegalStateException();
+				}
+				Node<T> removedNode = current != null ? current.prev : tail;
+				removeNode(removedNode);
+				flNext = false;
+			}
+			
+			
+		}
 	@Override
 	public boolean add(T obj) {
 		Node<T> node = new Node<>(obj);
 		addNode(size, node);
 		return true;
+	}
+
+	private void removeNode(Node<T> removedNode) {
+		if(removedNode == head) {
+			removeHead();
+		} else if(removedNode == tail) {
+			removeTail();
+		} else {
+			removeMiddle(removedNode);
+		}
+		size--;
+	}
+
+	private void removeMiddle(Node<T> removedNode) {
+		Node<T> prevNode = removedNode.prev;
+		Node<T> nextNode = removedNode.next;
+		removedNode.prev = removedNode.next  = null;
+		removedNode.obj = null;
+		prevNode.next = nextNode;
+		nextNode.prev = prevNode;
+		
+	}
+
+	private void removeTail() {
+		Node<T> prevTail = tail.prev;
+		tail.obj = null;
+		tail.prev = null;
+		prevTail.next = null;
+		tail = prevTail;
+		
+		
+	}
+
+	private void removeHead() {
+		if(head == tail) {
+			head = tail = null;
+		} else {
+			Node<T> nextHead = head.next;
+			head.obj = null;
+			head.next = null;
+			head = nextHead;
+			nextHead.prev = null;
+		}
+		
 	}
 
 	private void addNode(int index, Node<T> node) {
@@ -71,8 +147,7 @@ public class LinkedList<T> implements List<T> {
 
 	@Override
 	public Iterator<T> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new LinkedListIterator();
 	}
 
 	@Override
@@ -113,38 +188,44 @@ public class LinkedList<T> implements List<T> {
 
 	@Override
 	public T set(int index, T obj) {
-		// TODO Auto-generated method stub
-		return null;
+		indexValidation(index, false);
+		Node<T> node = getNode(index);
+		T res = node.obj;
+		node.obj = obj;
+		return res;
 	}
 
 	@Override
 	public T remove(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		indexValidation(index, false);
+		Node<T> node = getNode(index);
+		T res = node.obj;
+		removeNode(node);
+		return res;
 	}
 
-	@Override
-	public int indexOf(Object pattern) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int lastIndexOf(Object pattern) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	
 
 	@Override
 	public int indexOf(Predicate<T> predicate) {
-		// TODO Auto-generated method stub
-		return 0;
+		int index = 0;
+		Node<T> current = head;
+		while (current != null && !predicate.test(current.obj)) {
+			current = current.next;
+			index++;
+		}
+		return current == null ? -1 : index;
 	}
 
 	@Override
 	public int lastIndexOf(Predicate<T> predicate) {
-		// TODO Auto-generated method stub
-		return 0;
+		int index = size - 1;
+		Node<T> current = tail;
+		while (current != null && !predicate.test(current.obj)) {
+			current = current.prev;
+			index--;
+		}
+		return current == null ? -1 : index;
 	}
 
 }

@@ -92,10 +92,12 @@ protected Collection<Integer> collection;
 	 @Test
 	 void removeIfPerformanceTest() {
 		 Integer[] bigArray = getBigArray();
+		 Collection<Integer> bigCollection = null;
 		 for(int i = 0; i < N_RUNS; i++) {
-			  Collection<Integer> bigCollection = getCollection(bigArray);
+			 bigCollection = getCollection(bigArray);
 			  bigCollection.clear();
 		 }
+		 assertEquals(0, bigCollection.size());
 		
 	 }
 
