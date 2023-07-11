@@ -84,6 +84,10 @@ abstract class ListTest extends CollectionTest {
 		assertThrowsExactly(IndexOutOfBoundsException.class, () -> list.set(list.size(), 3));
 		assertThrowsExactly(IndexOutOfBoundsException.class, () -> list.set(-1, 3));
 	}
+	@Override 
+	protected void runArrayTest(Integer[] expected, Integer[] actual) {
+		assertArrayEquals(expected, actual);
+	}
 	
 
 	
