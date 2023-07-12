@@ -1,6 +1,7 @@
 package telran.util;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class HashSet<T> implements Set<T> {
@@ -14,6 +15,71 @@ public class HashSet<T> implements Set<T> {
 	}
 	public HashSet() {
 		this(DEFAULT_TABLE_LENGTH);
+	}
+	private class HashSetIterator implements Iterator<T> {
+		Integer currentIteratorIndex;
+		Iterator<T> currentIterator;
+		Iterator<T> prevIterator;
+		boolean flNext = false;
+		HashSetIterator() {
+			initialState();
+		}
+		private void initialState() {
+			currentIteratorIndex = getCurrentIteratorIndex(-1);
+			if(currentIteratorIndex > -1) {
+				currentIterator = hashTable[currentIteratorIndex].iterator();
+				
+				
+			}
+			
+			
+		}
+		private int getCurrentIteratorIndex(int currentIndex) {
+			currentIndex++;
+			while(currentIndex < hashTable.length && 
+					(hashTable[currentIndex] == null || hashTable[currentIndex].size() == 0)) {
+				currentIndex++;
+			}
+			return currentIndex < hashTable.length ? currentIndex : -1;
+		}
+		@Override
+		public boolean hasNext() {
+			
+			return currentIteratorIndex >= 0;
+		}
+
+		@Override
+		public T next() {
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			T res = currentIterator.next();
+			prevIterator = currentIterator;
+			updateState();
+			flNext = true;
+			return res;
+		}
+		private void updateState() {
+			if(!currentIterator.hasNext()) {
+				currentIteratorIndex =
+						getCurrentIteratorIndex(currentIteratorIndex);
+				if(currentIteratorIndex >= 0) {
+					currentIterator = hashTable[currentIteratorIndex].iterator();
+				}
+			}
+			
+			
+		}
+		@Override
+		public void remove() {
+			if(!flNext) {
+				throw new IllegalStateException();
+			}
+			prevIterator.remove();
+			size--;
+			flNext = false;
+		}
+		
 	}
 	@Override
 	public boolean add(T obj) {
@@ -86,8 +152,8 @@ public class HashSet<T> implements Set<T> {
 
 	@Override
 	public Iterator<T> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return new HashSetIterator();
 	}
 
 	@Override
