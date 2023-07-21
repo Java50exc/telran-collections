@@ -14,7 +14,7 @@ import telran.util.Collection;
 
 abstract class CollectionTest {
 Integer [] numbers = {10, -20, 8, 14, 30, 12, 100};
-static final int N_BIG_NUMBERS = 100_000;
+static final int N_BIG_NUMBERS = 100_00;
 static final int N_RUNS = 1000;
 private static final int N_RUNS_CONTAINS = 100_000;
 protected Collection<Integer> collection;

@@ -2,6 +2,7 @@ package telran.util;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 @SuppressWarnings("unchecked")
 public class TreeSet<T> implements SortedSet<T> {
 private static class Node<T> {
@@ -12,10 +13,61 @@ private static class Node<T> {
 	Node(T obj) {
 		this.obj = obj;
 	}
+	public void setNulls() {
+		obj = null;
+		parent = left = right = null;
+		
+	}
+}
+private class TreeSetIterator implements Iterator<T> {
+	Node<T> current;
+	Node<T> prev;
+	boolean flNext = false;
+
+	TreeSetIterator() {
+		current = root == null ? null : getLeastFrom(root);
+	}
+
+	@Override
+	public boolean hasNext() {
+
+		return current != null;
+	}
+
+	@Override
+	public T next() {
+		if (!hasNext()) {
+			throw new NoSuchElementException();
+		}
+		T res = current.obj;
+		prev = current;
+		current = getCurrent(current);
+		flNext = true;
+		return res;
+	}
+
+	@Override
+	public void remove() {
+		if (!flNext) {
+			throw new IllegalStateException();
+		}
+		removeNode(prev);
+		flNext = false;
+	}
 }
 	Node<T> root;
 	int size;
 	Comparator<T> comp;
+	private Node<T> getCurrent(Node<T> current) {
+
+		return current.right != null ? getLeastFrom(current.right) : getGreaterParent(current);
+	}
+	private Node<T> getGreaterParent(Node<T> current) {
+		while (current.parent != null && current == current.parent.right) {
+			current = current.parent;
+		}
+		return current.parent;
+	}
 	private Node<T> getParentOrNode(T key) {
 		Node<T> current = root;
 		Node<T> parent = null;
@@ -90,10 +142,52 @@ private static class Node<T> {
 
 	@Override
 	public boolean remove(Object pattern) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean res = false;
+		Node<T> node = getNode((T)pattern);
+		if (node != null) {
+			removeNode(node);
+			res = true;
+		}
+
+		return res;
 	}
 
+	private void removeNode(Node<T> node) {
+		if (node.left != null && node.right != null) {
+			removeJunction(node);
+		} else {
+			removeNonJunction(node);
+		}
+		size--;
+
+	}
+
+	private void removeJunction(Node<T> node) {
+		Node<T> substitute = getGreatestFrom(node.left);
+		node.obj = substitute.obj;
+		removeNonJunction(substitute);
+
+	}
+
+	private void removeNonJunction(Node<T> node) {
+		Node<T> parent = node.parent;
+		Node<T> child = node.left == null ? node.right : node.left;
+		if (parent == null) {
+			root = child;
+		} else {
+			if (node == parent.left) {
+				parent.left = child;
+			} else {
+				parent.right = child;
+			}
+
+		}
+		if (child != null) {
+			child.parent = parent;
+		}
+		node.setNulls();
+		
+	}
 	@Override
 	public boolean contains(Object pattern) {
 		
@@ -108,8 +202,8 @@ private static class Node<T> {
 
 	@Override
 	public Iterator<T> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return new TreeSetIterator();
 	}
 
 	@Override
@@ -144,16 +238,27 @@ private static class Node<T> {
 		}
 		return node;
 	}
+	private T floorCeiling(T pattern, boolean isFloor) {
+		T res = null;
+		int compRes = 0;
+		Node<T> current = root;
+		while (current != null && (compRes = comp.compare(pattern, current.obj)) != 0) {
+			if ((compRes < 0 && !isFloor) || (compRes > 0 && isFloor)) {
+				res = current.obj;
+			}
+			current = compRes < 0 ? current.left : current.right;
+		}
+		return current == null ? res : current.obj;
+
+	}
 	@Override
 	public T ceiling(T key) {
-		// TODO Auto-generated method stub
-		return null;
+		return floorCeiling(key, false);
 	}
 
 	@Override
 	public T floor(T key) {
-		// TODO Auto-generated method stub
-		return null;
+		return floorCeiling(key, true);
 	}
 
 }
