@@ -24,7 +24,6 @@ class LinearRecursionTest {
 		assertEquals(24, factorial(4));
 	}
 	@Test
-	@Disabled
 	void powTest() {
 		assertThrowsExactly(IllegalArgumentException.class, ()-> pow(10, -3));
 		assertEquals(-1000, pow(-10, 3));
@@ -59,6 +58,16 @@ class LinearRecursionTest {
 	void squareTest() {
 		assertEquals(100, square(10));
 		assertEquals(100, square(-10));
+	}
+	@Test
+	void isSubstringTest() {
+		String str = "blobloblobloblokbloblo.";
+		assertTrue(isSubstring(str, "blok"));
+		assertTrue(isSubstring(str, "kblob"));
+		assertTrue(isSubstring(str, "oblo."));
+		assertFalse(isSubstring(str, "blod"));
+		assertFalse(isSubstring(str, "bok"));
+		assertFalse(isSubstring(str, "loko"));
 	}
 
 }

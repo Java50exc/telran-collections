@@ -86,4 +86,24 @@ public static int square(int x) {
 	// Only + ; - arithmetic operations
 	return 0;
 }
+public static boolean isSubstring(String string, String substr) { 
+
+	//TODO
+	// returns true if a given 'substr' is indeed the //substring of a given `string` 
+
+	/*
+	  Challenges:
+	 1. To apply only following methods of the class String: charAt(int ind);  
+
+	String substring(int ind); 
+
+	 int length(); 
+
+	2. No cycles;
+	*/ 
+		
+
+		return false;
+
+	}
 }
