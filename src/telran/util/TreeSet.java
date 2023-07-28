@@ -340,8 +340,19 @@ private class TreeSetIterator implements Iterator<T> {
 		}
 		return res;
 	}
+	private void inverse(Node<T> root) {
+		if(root != null) {
+			Node<T> tmp = root.left;
+			root.left = root.right;
+			root.right = tmp;
+			inverse(root.left);
+			inverse(root.right);
+		}
+		
+	}
 	public void inverse() {
-		// TODO Auto-generated method stub
+		inverse(root);
+		comp = comp.reversed();
 		
 	}
 

@@ -1,13 +1,13 @@
 package telran.util.test;
 
-import telran.util.TreeSet;
+import telran.util.*;
 
 import static org.junit.Assert.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import telran.util.Collection;
+
 
 public class TreeSetTest extends SortedSetTest {
 	TreeSet<Integer> treeSet;
@@ -61,13 +61,31 @@ public class TreeSetTest extends SortedSetTest {
 	}
 
 	private void reorderArray(Integer[] array) {
-		// TODO Auto-generated method stub
+		List<Integer> list = new ArrayList<>();
+		reorderArray(array, 0, array.length - 1, list);
+		int index = 0;
+		for(int num: list) {
+			array[index++] = num;
+		}
+		
+		
+	}
+	private void reorderArray(Integer[] array, int left, int right,
+			List<Integer> list) {
+		if(left <= right) {
+			int middle = (left + right) / 2;
+			list.add(array[middle]);
+			reorderArray(array, left, middle - 1, list);
+			reorderArray(array, middle + 1, right, list);
+		}
 		
 	}
 	@Test
 	void inverseTest() {
-		Integer[] expected = {100, 30, 14, 10, 12, 8, -20   };
+		Integer[] expected = {100, 30, 14, 12, 10, 8, -20   };
 		treeSet.inverse();
+		treeSet.setSpacesPerLevel(4);
+		treeSet.displayRotated();
 		assertArrayEquals(expected, treeSet.toArray(new Integer[0]));
 		assertTrue(treeSet.contains(100));
 	}
