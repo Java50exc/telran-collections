@@ -19,6 +19,7 @@ public class LinkedList<T> implements List<T> {
 	 class LinkedListIterator implements Iterator<T> {
 		Node<T> current = head;
 		boolean flNext = false;
+		
 			@Override
 			public boolean hasNext() {
 				
