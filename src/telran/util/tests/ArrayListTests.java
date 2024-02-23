@@ -68,7 +68,7 @@ class ArrayListTests extends ListTests {
 	}
 	
 	private ArrayList<Integer> getArrayList() {
-		ArrayList<Integer> res = new ArrayList();
+		ArrayList<Integer> res = new ArrayList<>();
 		
 		for (var num: numbers) {
 			res.add(num);
