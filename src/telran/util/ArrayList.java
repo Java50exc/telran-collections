@@ -33,9 +33,10 @@ public class ArrayList<T> implements List<T> {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object pattern) {
-		@SuppressWarnings("unchecked")
+		
 		T obj = (T) pattern;
 		int oldSize = size;
 
@@ -66,7 +67,7 @@ public class ArrayList<T> implements List<T> {
 		
 		for (int i = 0; i < size; i++) {
 			if (predicate.test(array[i])) {
-				remove(i);
+				remove(i--);
 			}
 		}
 		return oldSize > size;
