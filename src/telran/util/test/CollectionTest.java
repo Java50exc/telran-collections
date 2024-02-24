@@ -43,6 +43,7 @@ protected Collection<Integer> collection;
 	 @Test
 	 void clearTest() {
 		 collection.clear();
+		 System.out.println(Arrays.toString(collection.toArray(new Integer[0])));
 		 assertEquals(0, collection.size());
 	 }
 	 @Test
