@@ -79,7 +79,6 @@ public class LinkedList<T> implements List<T> {
 
 		return new Iterator<T>() {
 			Node<T> next = head;
-			boolean wasNext = false;
 			Node<T> prev;
 
 			@Override
@@ -92,7 +91,6 @@ public class LinkedList<T> implements List<T> {
 				if (!hasNext()) {
 					throw new NoSuchElementException();
 				}
-				wasNext = true;
 				T res = next.obj;
 				prev = next;
 				next = next.next;
@@ -104,8 +102,7 @@ public class LinkedList<T> implements List<T> {
 					throw new IllegalStateException();
 				}
 
-				T res = size < 2 ? removeLast(prev)
-						: prev == head ? removeHead(prev) : prev == tail ? removeTail(prev) : removeMiddle(prev);
+				T res = prev == head ? removeHead(prev) : prev == tail ? removeTail(prev) : removeMiddle(prev);
 				size--;
 				prev = null;
 			}
@@ -170,6 +167,9 @@ public class LinkedList<T> implements List<T> {
 	}
 
 	private T removeHead(Node<T> node) {
+		if (size() < 2) {
+			return removeLast(node);
+		}
 		head = head.next;
 		head.prev.next = null;
 		head.prev = null;
@@ -177,6 +177,9 @@ public class LinkedList<T> implements List<T> {
 	}
 
 	private T removeTail(Node<T> node) {
+		if (size() < 2) {
+			return removeLast(node);
+		}
 		tail = tail.prev;
 		tail.next.prev = null;
 		tail.next = null;
